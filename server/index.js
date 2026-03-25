@@ -3,41 +3,41 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
-import helmet from 'helmet'; // 👈 FIX 1: Import syntax used correctly
+import helmet from 'helmet'; 
 
-// 👉 CHAT SYSTEM IMPORTS (From previous step)
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import Message from './models/Message.js';
 
-// 1️⃣ IMPORT ALL ROUTES HERE
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import chatRoutes from './routes/chatRoutes.js'; // Chat history route
+import chatRoutes from './routes/chatRoutes.js'; 
 import jwt from 'jsonwebtoken';
 import ticketRoutes from './routes/ticketRoutes.js';
+
 const JWT_SECRET = process.env.JWT_SECRET || "electrocare_super_secret_key_2026";
-dotenv.config();
 
-const app = express(); // 👈 FIX 2: App pehle banega
+const app = express();
 
-// 👉 EXPRESS SERVER KO HTTP SERVER MEIN CONVERT KIYA (For Chat)
 const httpServer = createServer(app);
 
-// 2️⃣ SECURITY MIDDLEWARES
-app.use(helmet()); // 👈 FIX 2: App banne ke baad helmet pehnaya
+// 👉 FIX 1: EXACT URLs WITHOUT TRAILING SLASHES!
+const allowedOrigins = [
+  'https://virtual-electro.vercel.app', // 👈 Tumhara main Vercel URL
+  'https://virtual-electro-ebnnkymu3-dhruvils-projects-9a843109.vercel.app', // Backup Vercel URL
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
 
-// 👈 FIX 3: Single, clean CORS policy
+// 👉 FIX 2: CORS SABSE UPAR HONA CHAHIYE
 app.use(cors({
-  origin: [
-    'https://virtual-electro-ebnnkymu3-dhruvils-projects-9a843109.vercel.app/', // 👈 Tumhara Vercel ka Live URL yahan aayega
-    'http://localhost:5173', // Local pe check karne ke liye
-    'http://localhost:3000'
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
+
+app.use(helmet()); 
 app.use(express.json()); 
 
 // 3️⃣ DATABASE CONNECTION
@@ -50,15 +50,19 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes); 
-app.use('/api/chats', chatRoutes); // Chat history ke liye
+app.use('/api/chats', chatRoutes); 
 app.use('/api/tickets', ticketRoutes);
+
 // ==========================================
 // 5️⃣ WEBSOCKETS (REAL-TIME PRIVATE CHAT)
 // ==========================================
+
+// 👉 FIX 3: SOCKET.IO KO BHI SAME CORS DO
 const io = new Server(httpServer, {
   cors: {
-    origin: ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'],
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -114,7 +118,7 @@ io.on('connection', (socket) => {
     }
   });
 });
+
 const PORT = process.env.PORT || 5000;
 
-// 👉 FIX: app.listen() nahi, ab httpServer.listen() chalega taaki Sockets bhi chalein!
-httpServer.listen(PORT, () => console.log(`🚀 Server & Sockets running on http://localhost:${PORT}`));
+httpServer.listen(PORT, () => console.log(`🚀 Server & Sockets running on port ${PORT}`));
