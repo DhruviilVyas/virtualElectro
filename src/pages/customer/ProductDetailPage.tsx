@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, Star, Heart, ShoppingCart, Minus, Plus, Store, Loader2
 } from "lucide-react";
+import { Product } from "@/types";
 import MobileShell from "@/components/MobileShell";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -12,11 +13,11 @@ const ProductDetailPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   // 👉 Real Data States
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
 
@@ -37,7 +38,7 @@ const ProductDetailPage: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     if (id) fetchProduct();
   }, [id]);
 
@@ -47,15 +48,15 @@ const ProductDetailPage: React.FC = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId: product._id, 
+          productId: product._id,
           quantity: quantity
         })
       });
       const data = await res.json();
-      
+
       if (res.ok) {
         toast({ title: "Purchase Successful!", description: "Stock updated in database." });
-        navigate("/customer"); 
+        navigate("/customer");
       } else {
         toast({ title: "Checkout Failed", description: data.error, variant: "destructive" });
       }
@@ -75,12 +76,12 @@ const ProductDetailPage: React.FC = () => {
     try {
       const res = await fetch("http://localhost:5000/api/users/cart", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ 
-          productId: product._id, 
+        body: JSON.stringify({
+          productId: product._id,
           quantity,
           action: "add" // Telling backend to ADD to existing quantity
         })
@@ -131,11 +132,11 @@ const ProductDetailPage: React.FC = () => {
         {/* Image Display */}
         <div className="relative bg-secondary">
           <div className="h-72 flex items-center justify-center text-8xl overflow-hidden">
-             {product.image && (product.image.startsWith('http') || product.image.includes('ixlib=rb-')) ? (
-               <img src={product.image.startsWith('http') ? product.image : `https://${product.image}`} alt={product.name} className="w-full h-full object-cover" />
-             ) : (
-               <span>{product.image || "📦"}</span>
-             )}
+            {product.image && (product.image.startsWith('http') || product.image.includes('ixlib=rb-')) ? (
+              <img src={product.image.startsWith('http') ? product.image : `https://${product.image}`} alt={product.name} className="w-full h-full object-cover" />
+            ) : (
+              <span>{product.image || "📦"}</span>
+            )}
           </div>
           {product.offer && (
             <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground text-[9px] px-3 py-1 rounded-full font-bold uppercase border-0">
@@ -154,7 +155,7 @@ const ProductDetailPage: React.FC = () => {
             </p>
           </div>
           <h1 className="text-2xl font-bold text-foreground">{product.name}</h1>
-          
+
           <div className="flex items-center gap-3 mt-2">
             <div className="flex items-center gap-1">
               <Star size={14} className="text-warning fill-warning" />
@@ -174,15 +175,15 @@ const ProductDetailPage: React.FC = () => {
           <div className="mt-6 flex items-center justify-between">
             <span className="text-sm font-bold text-foreground">Quantity</span>
             <div className="flex items-center gap-3 bg-secondary rounded-xl p-1">
-              <button 
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))} 
+              <button
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="w-9 h-9 bg-card rounded-lg flex items-center justify-center"
               >
                 <Minus size={14} className="text-foreground" />
               </button>
               <span className="font-bold font-mono text-foreground w-6 text-center">{quantity}</span>
-              <button 
-                onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))} 
+              <button
+                onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
                 className="w-9 h-9 bg-card rounded-lg flex items-center justify-center"
               >
                 <Plus size={14} className="text-foreground" />
@@ -197,20 +198,20 @@ const ProductDetailPage: React.FC = () => {
         <button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex-1 py-4 bg-foreground text-background rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-50">
           <ShoppingCart size={16} /> Add to Cart
         </button>
-      <button 
-  onClick={() => {
-    // We send an array with ONE item directly to checkout!
-    navigate("/customer/checkout", { 
-      state: { 
-        items: [{ ...product, cartQuantity: quantity }] 
-      } 
-    });
-  }} 
-  disabled={product.stock <= 0} 
-  className="px-6 py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-sm"
->
-  Buy Now
-</button>
+        <button
+          onClick={() => {
+            // We send an array with ONE item directly to checkout!
+            navigate("/customer/checkout", {
+              state: {
+                items: [{ ...product, cartQuantity: quantity }]
+              }
+            });
+          }}
+          disabled={product.stock <= 0}
+          className="px-6 py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-sm"
+        >
+          Buy Now
+        </button>
       </div>
     </MobileShell>
   );

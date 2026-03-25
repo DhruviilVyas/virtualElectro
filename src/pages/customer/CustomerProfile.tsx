@@ -38,7 +38,7 @@ const CustomerProfile: React.FC = () => {
           setUserData(data);
           localStorage.setItem("electrocare_user", JSON.stringify(data)); 
         }
-      } catch(e) {}
+      } catch(e) { /* ignore */ }
     }
     fetchFreshProfile();
   }, []);

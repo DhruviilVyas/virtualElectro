@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Order, OrderItem, Product } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ArrowLeft, Package, Clock, CheckCircle, Truck, 
-  ChevronRight, Loader2, ShoppingBag 
+import {
+  ArrowLeft, Package, Clock, CheckCircle, Truck,
+  ChevronRight, Loader2, ShoppingBag
 } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 const CustomerOrders: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   // 👉 SECURE STATE
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ const CustomerOrders: React.FC = () => {
         const res = await fetch("http://localhost:5000/api/orders/my-orders", {
           headers: { "Authorization": `Bearer ${token}` } // 👉 VIP PASS
         });
-        
+
         if (res.ok) {
           const data = await res.json();
           setOrders(data);
@@ -47,7 +47,7 @@ const CustomerOrders: React.FC = () => {
   }, []);
 
   const getStatusIcon = (status: string) => {
-    switch(status) {
+    switch (status) {
       case "Delivered": return <CheckCircle size={16} className="text-success" />;
       case "Shipped": return <Truck size={16} className="text-accent" />;
       case "Processing": return <Clock size={16} className="text-warning" />;
@@ -56,7 +56,7 @@ const CustomerOrders: React.FC = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case "Delivered": return "bg-success/10 text-success border-success/20";
       case "Shipped": return "bg-accent/10 text-accent border-accent/20";
       case "Processing": return "bg-warning/10 text-warning border-warning/20";
@@ -150,7 +150,7 @@ const CustomerOrders: React.FC = () => {
                 <ShoppingBag size={30} className="text-muted-foreground" />
               </div>
               <h3 className="font-bold text-foreground text-lg">No orders yet</h3>
-              <p className="text-sm text-muted-foreground mt-2 max-w-[200px] mx-auto">Looks like you haven't made any purchases securely yet.</p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-[200px] mx-auto">Looks like you haven&apos;t made any purchases securely yet.</p>
               <button onClick={() => navigate('/customer')} className="mt-6 px-6 py-3 gradient-primary text-primary-foreground rounded-xl font-bold text-sm shadow-glow">
                 Start Exploring
               </button>

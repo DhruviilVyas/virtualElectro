@@ -6,6 +6,7 @@ import {
   ShoppingBag, Shield, Truck, Award, MessageCircle,
   Percent, Headphones, ShoppingCart, Zap, ArrowRight, Loader2, User as UserIcon
 } from "lucide-react";
+import { Merchant, Product } from "@/types";
 import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Badge } from "@/components/ui/badge";
@@ -24,8 +25,8 @@ const ShopDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"products" | "reviews" | "about">("products");
 
   // 👉 DYNAMIC STATES
-  const [shop, setShop] = useState<any>(null);
-  const [shopProducts, setShopProducts] = useState<any[]>([]);
+  const [shop, setShop] = useState<Merchant | null>(null);
+  const [shopProducts, setShopProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -41,11 +42,11 @@ const ShopDetailPage: React.FC = () => {
           const shopData = await shopRes.json();
           setShop(shopData);
         }
-        
+
         if (productsRes.ok) {
           const allProducts = await productsRes.json();
           // 🔥 FILTER: Sirf is shop/merchant ke products dikhao
-          const filtered = allProducts.filter((p: any) => p.merchantId === id);
+          const filtered = allProducts.filter((p: Product) => p.merchantId === id);
           setShopProducts(filtered);
         }
       } catch (err) {
@@ -59,7 +60,7 @@ const ShopDetailPage: React.FC = () => {
   }, [id]);
 
   if (isLoading) {
-    return <MobileShell><div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" size={32}/></div></MobileShell>;
+    return <MobileShell><div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div></MobileShell>;
   }
 
   if (!shop) {
@@ -119,7 +120,7 @@ const ShopDetailPage: React.FC = () => {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-3 gap-2 mt-4">
-              {[ { icon: Phone, label: "Call" }, { icon: MessageCircle, label: "Chat" }, { icon: MapPin, label: "Directions" } ].map((action) => (
+              {[{ icon: Phone, label: "Call" }, { icon: MessageCircle, label: "Chat" }, { icon: MapPin, label: "Directions" }].map((action) => (
                 <button key={action.label} className="flex flex-col items-center gap-1.5 py-3 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors">
                   <action.icon size={16} className="text-primary" />
                   <span className="text-[10px] font-bold text-primary">{action.label}</span>
@@ -136,9 +137,8 @@ const ShopDetailPage: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold capitalize transition-all ${
-                  activeTab === tab ? "gradient-primary text-primary-foreground shadow-glow" : "text-muted-foreground"
-                }`}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold capitalize transition-all ${activeTab === tab ? "gradient-primary text-primary-foreground shadow-glow" : "text-muted-foreground"
+                  }`}
               >
                 {tab}
               </button>
@@ -151,7 +151,7 @@ const ShopDetailPage: React.FC = () => {
           {activeTab === "products" && (
             <motion.div key="products" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-5 mt-4">
               {shopProducts.length === 0 ? (
-                 <p className="text-center text-muted-foreground py-10 text-sm">No products listed by this merchant yet.</p>
+                <p className="text-center text-muted-foreground py-10 text-sm">No products listed by this merchant yet.</p>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {shopProducts.map((p, i) => (
@@ -185,18 +185,18 @@ const ShopDetailPage: React.FC = () => {
 
           {activeTab === "about" && (
             <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-5 mt-4 space-y-3">
-               <div className="glass rounded-2xl p-4 space-y-3 shadow-elevated">
-                 <h3 className="text-sm font-extrabold text-foreground font-display">About {shop.name}</h3>
-                 <p className="text-xs text-muted-foreground leading-relaxed">Official merchant on ElectroCare. Contact us for bulk orders or local delivery.</p>
-               </div>
-               <div className="grid grid-cols-2 gap-2">
-                 {SHOP_FEATURES.map((feat, i) => (
-                   <div key={i} className="flex items-start gap-3 p-3 glass rounded-xl shadow-elevated">
-                     <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shrink-0"><feat.icon size={12} className="text-primary-foreground" /></div>
-                     <div><p className="text-[10px] font-bold text-foreground">{feat.label}</p></div>
-                   </div>
-                 ))}
-               </div>
+              <div className="glass rounded-2xl p-4 space-y-3 shadow-elevated">
+                <h3 className="text-sm font-extrabold text-foreground font-display">About {shop.name}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">Official merchant on ElectroCare. Contact us for bulk orders or local delivery.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {SHOP_FEATURES.map((feat, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 glass rounded-xl shadow-elevated">
+                    <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shrink-0"><feat.icon size={12} className="text-primary-foreground" /></div>
+                    <div><p className="text-[10px] font-bold text-foreground">{feat.label}</p></div>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
