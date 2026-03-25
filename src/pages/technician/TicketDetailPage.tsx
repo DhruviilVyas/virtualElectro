@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, MapPin, Phone, Mail, Navigation, ShieldCheck, ShieldX,
-  Clock, Wrench, CheckCircle2, User, Calendar, AlertTriangle
+  Clock, Wrench, CheckCircle2, User, Calendar, AlertTriangle,
+  Link
 } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import { MOCK_TICKETS } from "@/lib/mockData";
@@ -142,14 +143,14 @@ const TicketDetailPage: React.FC = () => {
             </div>
             <p className="font-bold text-foreground">{ticket.customer}</p>
             <div className="mt-3 space-y-2">
-              <a href={`tel:${details.phone}`} className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
+              <Link href={`tel:${details.phone}`} className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
                 <Phone size={14} className="text-primary" />
                 <span className="text-sm text-foreground font-medium">{details.phone}</span>
-              </a>
-              <a href={`mailto:${details.email}`} className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
+              </Link>
+              <Link href={`mailto:${details.email}`} className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
                 <Mail size={14} className="text-primary" />
                 <span className="text-sm text-foreground font-medium">{details.email}</span>
-              </a>
+              </Link>
             </div>
           </motion.div>
 
@@ -185,11 +186,10 @@ const TicketDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className={`p-5 rounded-2xl border ${
-              details.warrantyStatus === "active"
+            className={`p-5 rounded-2xl border ${details.warrantyStatus === "active"
                 ? "bg-success/5 border-success/20"
                 : "bg-destructive/5 border-destructive/20"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2 mb-3">
               {details.warrantyStatus === "active" ? (
@@ -199,11 +199,10 @@ const TicketDetailPage: React.FC = () => {
               )}
               <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Warranty</h2>
               <Badge
-                className={`text-[9px] font-bold rounded-full border-0 ml-auto ${
-                  details.warrantyStatus === "active"
+                className={`text-[9px] font-bold rounded-full border-0 ml-auto ${details.warrantyStatus === "active"
                     ? "bg-success/10 text-success"
                     : "bg-destructive/10 text-destructive"
-                }`}
+                  }`}
               >
                 {details.warrantyStatus === "active" ? "Active" : "Expired"}
               </Badge>

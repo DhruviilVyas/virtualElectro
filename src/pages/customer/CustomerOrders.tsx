@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Order, OrderItem, Product } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -13,7 +14,7 @@ const CustomerOrders: React.FC = () => {
   const { toast } = useToast();
   
   // 👉 SECURE STATE
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // 👉 FETCH ORDERS FROM SECURE API
@@ -108,8 +109,8 @@ const CustomerOrders: React.FC = () => {
 
                 {/* Order Items */}
                 <div className="space-y-3">
-                  {order.products.map((item: any, index: number) => {
-                    const product = item.product || {}; // Safe fallback
+                  {order.products.map((item: OrderItem, index: number) => {
+                    const product = (item.product || {}) as Product; // Safe fallback with type
                     return (
                       <div key={index} className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-xl shrink-0 overflow-hidden">

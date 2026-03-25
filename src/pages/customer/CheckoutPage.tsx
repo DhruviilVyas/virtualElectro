@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { CartItem, Address, Product } from "@/types";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -24,8 +25,8 @@ const CheckoutPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [addresses, setAddresses] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   
   const [selectedPayment, setSelectedPayment] = useState("wallet");
@@ -48,7 +49,7 @@ const CheckoutPage: React.FC = () => {
           const { area, city } = JSON.parse(savedLoc);
           // Set text exactly how it looks in real apps
           setNewAddress(`${area}, ${city}\n\nFlat/House No: `);
-        } catch(e) {}
+        } catch(e) { /* ignore */ }
       }
     }
   }, [showAddForm]);
@@ -63,7 +64,7 @@ const CheckoutPage: React.FC = () => {
         const cartRes = await fetch("http://localhost:5000/api/users/cart", { headers: { "Authorization": `Bearer ${token}` }});
         if (cartRes.ok) {
           const cartData = await cartRes.json();
-          setCartItems(cartData.map((i: any) => ({ ...i.product, cartQuantity: i.quantity })).filter(Boolean));
+          setCartItems(cartData.map((i: {product: Product, quantity: number}) => ({ ...i.product, cartQuantity: i.quantity })).filter(Boolean));
         }
       }
 
@@ -71,7 +72,7 @@ const CheckoutPage: React.FC = () => {
       if (addrRes.ok) {
         const addrData = await addrRes.json();
         setAddresses(addrData);
-        const defaultAddr = addrData.find((a: any) => a.isDefault);
+        const defaultAddr = addrData.find((a: Address) => a.isDefault);
         if (defaultAddr) setSelectedAddressId(defaultAddr._id);
         else if (addrData.length > 0) setSelectedAddressId(addrData[0]._id);
       }

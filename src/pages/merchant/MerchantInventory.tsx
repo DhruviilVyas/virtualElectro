@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Product } from "@/types";
 import { Package, LayoutDashboard, ShoppingBag, PlusCircle, Settings, X, Search, Tag, Wrench, Loader2, ImagePlus } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -7,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const MerchantInventory: React.FC = () => {
   const [showAdd, setShowAdd] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const { toast } = useToast();
@@ -54,7 +55,7 @@ const MerchantInventory: React.FC = () => {
     setShowAdd(true);
   };
 
-  const openEditForm = (product: any) => {
+  const openEditForm = (product: Product) => {
     setEditingId(product._id);
     setName(product.name);
     setPrice(String(product.price));

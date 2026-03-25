@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Product } from "@/types";
 import { Heart, ShoppingBag, MapPin, User, Trash2, ShoppingCart, Loader2, Minus, Plus } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -9,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 const CustomerWishlist: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [wishlistItems, setWishlistItems] = useState<any[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // 👉 Local quantities state to handle multiple items before adding to cart
@@ -30,7 +31,7 @@ const CustomerWishlist: React.FC = () => {
         
         // Initialize default quantity as 1 for all fetched items
         const initialQtys: Record<string, number> = {};
-        validItems.forEach((p: any) => { initialQtys[p._id] = 1; });
+        validItems.forEach((p: Product) => { initialQtys[p._id] = 1; });
         setItemQuantities(initialQtys);
       }
     } catch (error) {
@@ -69,7 +70,7 @@ const CustomerWishlist: React.FC = () => {
   };
 
   // 👉 SECURE ADD TO CART WITH SELECTED QUANTITY
-  const handleAddToCart = async (product: any, e: React.MouseEvent) => {
+  const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
     const token = localStorage.getItem("electrocare_token");
     const quantity = itemQuantities[product._id] || 1;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Txn } from "@/types";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -13,7 +14,7 @@ const CustomerPassbook: React.FC = () => {
   const { toast } = useToast();
   
   const [balance, setBalance] = useState(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Txn[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

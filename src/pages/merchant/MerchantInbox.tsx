@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { ChatContact, ChatMessage } from "@/types";
 import { io, Socket } from "socket.io-client";
 import {
   ArrowLeft, MessageCircle, Search, Send, CheckCheck, Loader2
@@ -15,12 +16,12 @@ const MerchantInbox: React.FC = () => {
   const { toast } = useToast();
 
   // 👉 STATES
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [isLoadingContacts, setIsLoadingContacts] = useState(true);
   
   // Chat Room States
-  const [activeChat, setActiveChat] = useState<any | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [activeChat, setActiveChat] = useState<ChatContact | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [isFetchingChat, setIsFetchingChat] = useState(false);
 
@@ -108,7 +109,7 @@ const MerchantInbox: React.FC = () => {
     };
   }, [user, activeChat]); // Add activeChat as dependency so socket has the latest state
   //  // 👉 2. OPEN A CHAT
-  const handleOpenChat = async (contact: any) => {
+  const handleOpenChat = async (contact: ChatContact) => {
     setActiveChat(contact);
     setIsFetchingChat(true);
     

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Product, Merchant } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -38,8 +39,8 @@ const CustomerHome: React.FC = () => {
   const [sortBy, setSortBy] = useState<"none" | "low" | "high">("none");
 
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [dbProducts, setDbProducts] = useState<any[]>([]);
-  const [realShops, setRealShops] = useState<any[]>([]);
+  const [dbProducts, setDbProducts] = useState<Product[]>([]);
+  const [realShops, setRealShops] = useState<Merchant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [userLocation, setUserLocation] = useState<{ city: string, area: string } | null>(null);
@@ -82,7 +83,7 @@ const CustomerHome: React.FC = () => {
   }, []);
 
   // 👉 MASTER FILTERING & SORTING LOGIC
-  let filteredProducts = dbProducts.filter((p) => {
+  const filteredProducts = dbProducts.filter((p) => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || 
                           (p.shopName && p.shopName.toLowerCase().includes(debouncedSearch.toLowerCase()));

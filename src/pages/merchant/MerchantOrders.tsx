@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LayoutDashboard, Package, ShoppingBag, Truck, CheckCircle2, Clock, Box, Phone, MapPin, Loader2, Tag, ExternalLink } from "lucide-react";
+import { Order, OrderItem } from "@/types";
 import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,7 @@ const STATUS_CONFIG: Record<string, { icon: React.ElementType; color: string; ne
 const TABS = ["All", "Processing", "Packed", "Shipped", "Delivered"];
 
 const MerchantOrders: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("All");
   
@@ -153,7 +154,7 @@ const MerchantOrders: React.FC = () => {
                   </div>
 
                   <div className="space-y-2 mb-4">
-                    {order.products?.map((item: any, idx: number) => (
+                    {order.products?.map((item: OrderItem, idx: number) => (
                       <div key={idx} className="flex justify-between items-center bg-background border border-border/50 p-2.5 rounded-lg text-xs">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="w-5 h-5 bg-secondary rounded flex items-center justify-center font-bold text-primary shrink-0">{item.quantity}</span>

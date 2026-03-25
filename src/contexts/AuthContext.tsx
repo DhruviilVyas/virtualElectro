@@ -1,11 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export interface UserData {
+  id?: string;
+  _id?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
 interface AuthContextType {
   isLoggedIn: boolean;
   role: string | null;
-  user: any | null;
+  user: UserData | null;
   // Make sure this expects TWO arguments
-  login: (role: string, userData: any) => void; 
+  login: (role: string, userData: UserData) => void; 
   logout: () => void;
 }
 
@@ -14,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
@@ -30,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false); 
   }, []);
 
-  const login = (newRole: string, userData: any) => {
+  const login = (newRole: string, userData: UserData) => {
     setIsLoggedIn(true);
     setRole(newRole);
     setUser(userData);

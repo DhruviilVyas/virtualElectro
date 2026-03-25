@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Merchant } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Star, Navigation, Search, ArrowRight, ShoppingCart, Loader2 } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
@@ -11,7 +12,7 @@ const CustomerNearby: React.FC = () => {
   const navigate = useNavigate();
   
   // 👉 NAYA: Real Merchants State
-  const [merchants, setMerchants] = useState<any[]>([]);
+  const [merchants, setMerchants] = useState<Merchant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

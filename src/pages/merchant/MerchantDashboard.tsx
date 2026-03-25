@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Order, Product } from "@/types";
 import { io, Socket } from "socket.io-client"; // 👈 Chat Socket Import kiya
 import {
   LayoutDashboard, Package, ShoppingBag, AlertCircle,
@@ -39,8 +40,8 @@ const MerchantDashboard: React.FC = () => {
 
  
   const [totalRevenue, setTotalRevenue] = useState(0);
-const [dbOrders, setDbOrders] = useState<any[]>([]);
-  const [dbProducts, setDbProducts] = useState<any[]>([]);
+const [dbOrders, setDbOrders] = useState<Order[]>([]);
+  const [dbProducts, setDbProducts] = useState<Product[]>([]);
   const [walletBalance, setWalletBalance] = useState(0); // 👉 Naya state add kiya
   // 👉 CHAT NOTIFICATION STATE
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
