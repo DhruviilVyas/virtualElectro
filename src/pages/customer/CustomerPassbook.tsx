@@ -23,7 +23,7 @@ const CustomerPassbook: React.FC = () => {
       if (!token) return navigate("/");
 
       try {
-        const res = await fetch("http://localhost:5000/api/users/passbook", {
+        const res = await fetch("https://virtualelectro.onrender.com/api/users/passbook", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         

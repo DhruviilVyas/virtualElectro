@@ -68,7 +68,7 @@ const MerchantDashboard: React.FC = () => {
     const token = localStorage.getItem("electrocare_token");
     if (!user?._id || !token) return;
 
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io("https://virtualelectro.onrender.com", {
       auth: { token }
     });
 
@@ -96,9 +96,9 @@ const MerchantDashboard: React.FC = () => {
 
       try {
         const [resOrders, resProducts, resMe] = await Promise.all([
-          fetch("http://localhost:5000/api/orders", { headers: { "Authorization": `Bearer ${token}` } }),
-          fetch("http://localhost:5000/api/products/my-inventory", { headers: { "Authorization": `Bearer ${token}` } }),
-          fetch("http://localhost:5000/api/auth/me", { headers: { "Authorization": `Bearer ${token}` } })
+          fetch("https://virtualelectro.onrender.com/api/orders", { headers: { "Authorization": `Bearer ${token}` } }),
+          fetch("https://virtualelectro.onrender.com/api/products/my-inventory", { headers: { "Authorization": `Bearer ${token}` } }),
+          fetch("https://virtualelectro.onrender.com/api/auth/me", { headers: { "Authorization": `Bearer ${token}` } })
         ]);
 
         if (resOrders.ok) setDbOrders(await resOrders.json());

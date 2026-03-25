@@ -25,7 +25,7 @@ const ProductDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const res = await fetch(`https://virtualelectro.onrender.com/api/products/${id}`);
         if (res.ok) {
           const data = await res.json();
           setProduct(data);
@@ -44,7 +44,7 @@ const ProductDetailPage: React.FC = () => {
 
   const handleBuyNow = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -74,7 +74,7 @@ const ProductDetailPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/cart", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/users/cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

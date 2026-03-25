@@ -33,7 +33,7 @@ const MerchantOrders: React.FC = () => {
     if (!token) return navigate("/");
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/orders", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
@@ -58,7 +58,7 @@ const MerchantOrders: React.FC = () => {
         payload.trackingId = trackingNumber;
       }
 
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+      const res = await fetch(`https://virtualelectro.onrender.com/api/orders/${orderId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

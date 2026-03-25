@@ -71,7 +71,7 @@ const AuthPage: React.FC = () => {
 
     setIsLoading(true); 
     const sanitizedEmail = email.trim().toLowerCase();
-    const endpoint = isRegister ? "http://localhost:5000/api/auth/register" : "http://localhost:5000/api/auth/login";
+    const endpoint = isRegister ? "https://virtualelectro.onrender.com/api/auth/register" : "https://virtualelectro.onrender.com/api/auth/login";
     
     try {
       const res = await fetch(endpoint, {

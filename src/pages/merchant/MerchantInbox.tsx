@@ -41,7 +41,7 @@ const MerchantInbox: React.FC = () => {
 
     const initSocketsAndData = async () => {
       // Setup Socket FIRST
-      socketRef.current = io("http://localhost:5000", { auth: { token } });
+      socketRef.current = io("https://virtualelectro.onrender.com", { auth: { token } });
       socketRef.current.emit("register_user", user._id);
 
       // Listeners
@@ -88,7 +88,7 @@ const MerchantInbox: React.FC = () => {
       // 👉 FETCH LIST OF CONTACTS FROM DB
       const fetchContacts = async () => {
         try {
-          const res = await fetch("http://localhost:5000/api/chats/contacts", {
+          const res = await fetch("https://virtualelectro.onrender.com/api/chats/contacts", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) setContacts(await res.json());
@@ -118,7 +118,7 @@ const MerchantInbox: React.FC = () => {
 
     const token = localStorage.getItem("electrocare_token");
     try {
-      const res = await fetch(`http://localhost:5000/api/chats/${contact.contactId}`, {
+      const res = await fetch(`https://virtualelectro.onrender.com/api/chats/${contact.contactId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) setMessages(await res.json());

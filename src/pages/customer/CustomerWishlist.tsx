@@ -21,7 +21,7 @@ const CustomerWishlist: React.FC = () => {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/wishlist", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/users/wishlist", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
@@ -58,7 +58,7 @@ const CustomerWishlist: React.FC = () => {
     setWishlistItems(prev => prev.filter(p => p._id !== productId));
 
     try {
-      await fetch("http://localhost:5000/api/users/wishlist", {
+      await fetch("https://virtualelectro.onrender.com/api/users/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ productId })
@@ -76,7 +76,7 @@ const CustomerWishlist: React.FC = () => {
     const quantity = itemQuantities[product._id] || 1;
     
     try {
-      const res = await fetch("http://localhost:5000/api/users/cart", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/users/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ productId: product._id, quantity: quantity })

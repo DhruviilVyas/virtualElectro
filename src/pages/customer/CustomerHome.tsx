@@ -77,8 +77,8 @@ const CustomerHome: React.FC = () => {
     const fetchAllData = async () => {
       try {
         const [productsRes, shopsRes] = await Promise.all([
-          fetch("http://localhost:5000/api/products").catch(() => null),
-          fetch("http://localhost:5000/api/users/merchants").catch(() => null)
+          fetch("https://virtualelectro.onrender.com/api/products").catch(() => null),
+          fetch("https://virtualelectro.onrender.com/api/users/merchants").catch(() => null)
         ]);
 
         if (productsRes && productsRes.ok) {

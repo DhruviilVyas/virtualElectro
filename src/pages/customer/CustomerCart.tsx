@@ -47,14 +47,14 @@ const CheckoutPage: React.FC = () => {
       if (location.state && location.state.items) {
         setCartItems(location.state.items);
       } else {
-        const cartRes = await fetch("http://localhost:5000/api/users/cart", { headers: { "Authorization": `Bearer ${token}` }});
+        const cartRes = await fetch("https://virtualelectro.onrender.com/api/users/cart", { headers: { "Authorization": `Bearer ${token}` }});
         if (cartRes.ok) {
           const cartData = await cartRes.json();
           setCartItems(cartData.map((i: {product: Product, quantity: number}) => ({ ...i.product, cartQuantity: i.quantity })).filter(Boolean));
         }
       }
 
-      const addrRes = await fetch("http://localhost:5000/api/users/addresses", { headers: { "Authorization": `Bearer ${token}` }});
+      const addrRes = await fetch("https://virtualelectro.onrender.com/api/users/addresses", { headers: { "Authorization": `Bearer ${token}` }});
       if (addrRes.ok) {
         const addrData = await addrRes.json();
         setAddresses(addrData);
@@ -108,7 +108,7 @@ const CheckoutPage: React.FC = () => {
     setIsProcessing(true);
     const token = localStorage.getItem("electrocare_token");
     try {
-      const res = await fetch("http://localhost:5000/api/users/addresses", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/users/addresses", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ label: newLabel, address: newAddress, isDefault: addresses.length === 0 })
@@ -150,7 +150,7 @@ const CheckoutPage: React.FC = () => {
     }));
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ 

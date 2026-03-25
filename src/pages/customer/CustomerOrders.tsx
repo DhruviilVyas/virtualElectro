@@ -28,7 +28,7 @@ const CustomerOrders: React.FC = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/orders/my-orders", {
+        const res = await fetch("https://virtualelectro.onrender.com/api/orders/my-orders", {
           headers: { "Authorization": `Bearer ${token}` } // 👉 VIP PASS
         });
 

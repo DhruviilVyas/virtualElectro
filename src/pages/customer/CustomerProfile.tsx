@@ -30,7 +30,7 @@ const CustomerProfile: React.FC = () => {
       const token = localStorage.getItem("electrocare_token");
       if(!token) return;
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch("https://virtualelectro.onrender.com/api/auth/me", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if(res.ok) {
@@ -57,7 +57,7 @@ const CustomerProfile: React.FC = () => {
       formData.append("image", file);
 
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile-pic", {
+        const res = await fetch("https://virtualelectro.onrender.com/api/users/profile-pic", {
           method: "PUT",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData

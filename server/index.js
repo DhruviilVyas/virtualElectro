@@ -31,11 +31,13 @@ app.use(helmet()); // 👈 FIX 2: App banne ke baad helmet pehnaya
 
 // 👈 FIX 3: Single, clean CORS policy
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: [
+    'https://virtual-electro-ebnnkymu3-dhruvils-projects-9a843109.vercel.app/', // 👈 Tumhara Vercel ka Live URL yahan aayega
+    'http://localhost:5173', // Local pe check karne ke liye
+    'http://localhost:3000'
+  ],
   credentials: true
 }));
-
 app.use(express.json()); 
 
 // 3️⃣ DATABASE CONNECTION

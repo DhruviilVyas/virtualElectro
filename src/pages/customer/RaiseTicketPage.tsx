@@ -34,8 +34,8 @@ const ShopDetailPage: React.FC = () => {
       try {
         // Fetch Merchant Details & All Products in parallel
         const [shopRes, productsRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/users/merchants/${id}`),
-          fetch("http://localhost:5000/api/products")
+          fetch(`https://virtualelectro.onrender.com/api/users/merchants/${id}`),
+          fetch("https://virtualelectro.onrender.com/api/products")
         ]);
 
         if (shopRes.ok) {

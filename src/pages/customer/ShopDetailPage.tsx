@@ -81,9 +81,9 @@ const ShopDetailPage: React.FC = () => {
   const fetchAllData = async () => {
     try {
       const [shopRes, productsRes, reviewsRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/users/merchants/${id}`),
-        fetch("http://localhost:5000/api/products"),
-        fetch(`http://localhost:5000/api/users/merchants/${id}/reviews`)
+        fetch(`https://virtualelectro.onrender.com/api/users/merchants/${id}`),
+        fetch("https://virtualelectro.onrender.com/api/products"),
+        fetch(`https://virtualelectro.onrender.com/api/users/merchants/${id}/reviews`)
       ]);
 
       if (shopRes.ok) setShop(await shopRes.json());
@@ -112,14 +112,14 @@ const ShopDetailPage: React.FC = () => {
 
     const initSocket = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch("https://virtualelectro.onrender.com/api/auth/me", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (res.ok) {
           const userData = await res.json();
           setMyUserId(userData._id);
 
-          socketRef.current = io("http://localhost:5000", { auth: { token } });
+          socketRef.current = io("https://virtualelectro.onrender.com", { auth: { token } });
           socketRef.current.emit("register_user", userData._id);
 
           socketRef.current.on("receive_private_message", (msg: MessageType) => {
@@ -159,7 +159,7 @@ const ShopDetailPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/chats/${id}`, {
+      const res = await fetch(`https://virtualelectro.onrender.com/api/chats/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
@@ -193,7 +193,7 @@ const ShopDetailPage: React.FC = () => {
     const token = localStorage.getItem("electrocare_token");
     setIsSubmittingReview(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/users/merchants/${id}/reviews`, {
+      const res = await fetch(`https://virtualelectro.onrender.com/api/users/merchants/${id}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

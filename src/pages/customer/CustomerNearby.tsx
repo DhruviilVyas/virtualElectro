@@ -18,7 +18,7 @@ const CustomerNearby: React.FC = () => {
   useEffect(() => {
     const fetchMerchants = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/merchants");
+        const res = await fetch("https://virtualelectro.onrender.com/api/users/merchants");
         if (res.ok) {
           const data = await res.json();
           setMerchants(data);

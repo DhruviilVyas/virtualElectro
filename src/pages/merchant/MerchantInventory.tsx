@@ -30,7 +30,7 @@ const MerchantInventory: React.FC = () => {
   const fetchMyProducts = async () => {
     const token = localStorage.getItem("electrocare_token");
     try {
-      const res = await fetch("http://localhost:5000/api/products/my-inventory", {
+      const res = await fetch("https://virtualelectro.onrender.com/api/products/my-inventory", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if(res.ok) {
@@ -100,8 +100,8 @@ const MerchantInventory: React.FC = () => {
 
     try {
       const endpoint = editingId 
-        ? `http://localhost:5000/api/products/${editingId}`
-        : `http://localhost:5000/api/products`;
+        ? `https://virtualelectro.onrender.com/api/products/${editingId}`
+        : `https://virtualelectro.onrender.com/api/products`;
       
       const method = editingId ? "PUT" : "POST";
 
@@ -135,7 +135,7 @@ const MerchantInventory: React.FC = () => {
     const token = localStorage.getItem("electrocare_token");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${editingId}`, {
+      const res = await fetch(`https://virtualelectro.onrender.com/api/products/${editingId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
