@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { 
-  ShoppingBag, Heart, MapPin, ShoppingCart, User, 
+  ShoppingBag, Heart, MapPin, ShoppingCart, User, Store, Truck,
   Minus, Plus, Trash2, ArrowRight, Receipt, Loader2, AlertCircle, Wallet, Zap 
 } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
