@@ -13,7 +13,8 @@ import BottomTabBar from "@/components/BottomTabBar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
-// Explicitly defined interfaces to avoid 'any'
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://virtualelectro.onrender.com";
+
 interface ProductType {
   _id?: string;
   id?: string;
@@ -77,8 +78,8 @@ const CustomerHome: React.FC = () => {
     const fetchAllData = async () => {
       try {
         const [productsRes, shopsRes] = await Promise.all([
-          fetch("https://virtualelectro.onrender.com/api/products").catch(() => null),
-          fetch("https://virtualelectro.onrender.com/api/users/merchants").catch(() => null)
+          fetch(`${API_BASE_URL}/api/products`).catch(() => null),
+          fetch(`${API_BASE_URL}/api/users/merchants`).catch(() => null)
         ]);
 
         if (productsRes && productsRes.ok) {
@@ -172,12 +173,10 @@ const CustomerHome: React.FC = () => {
 
   return (
     <MobileShell>
-      <div className="pb-28">
-
+      <div className="pb-24">
         {/* PREMIUM HEADER WITH BRANDING */}
         <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-xl border-b border-border shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
           <div className="px-5 pt-5 pb-4">
-
             <div className="flex justify-between items-center mb-5">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0">
@@ -188,7 +187,6 @@ const CustomerHome: React.FC = () => {
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Marketplace</p>
                 </div>
               </div>
-
               <button onClick={() => navigate('/customer/notifications')} className="w-10 h-10 bg-secondary/80 hover:bg-secondary rounded-xl flex items-center justify-center relative transition-colors border border-border/50">
                 <Bell size={18} className="text-foreground" />
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full animate-pulse-dot ring-2 ring-background" />
@@ -370,11 +368,12 @@ const CustomerHome: React.FC = () => {
         </div>
       </div>
 
+      {/* 👉 FIX: Added z-[100] to ensure Modals are strictly ABOVE the BottomTabBar */}
       <AnimatePresence>
         {showLocationModal && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowLocationModal(false)} className="fixed inset-0 bg-foreground/40 z-40 backdrop-blur-sm" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed bottom-0 left-0 right-0 bg-card rounded-t-[32px] z-50 border-t border-border shadow-[0_-20px_40px_rgba(0,0,0,0.15)] flex flex-col p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowLocationModal(false)} className="fixed inset-0 bg-foreground/40 z-[100] backdrop-blur-sm" />
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed bottom-0 left-0 right-0 bg-card rounded-t-[32px] z-[100] border-t border-border shadow-[0_-20px_40px_rgba(0,0,0,0.15)] flex flex-col p-6 pb-10">
 
               <div className="flex justify-center pb-4">
                 <div className="w-12 h-1.5 bg-secondary rounded-full" />
@@ -422,11 +421,12 @@ const CustomerHome: React.FC = () => {
         )}
       </AnimatePresence>
 
+      {/* 👉 FIX: Added z-[100] here too */}
       <AnimatePresence>
         {showFilterModal && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilterModal(false)} className="fixed inset-0 bg-foreground/40 z-40 backdrop-blur-sm" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed bottom-0 left-0 right-0 bg-card rounded-t-[32px] z-50 border-t border-border shadow-[0_-20px_40px_rgba(0,0,0,0.15)] flex flex-col max-h-[85vh]">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilterModal(false)} className="fixed inset-0 bg-foreground/40 z-[100] backdrop-blur-sm" />
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed bottom-0 left-0 right-0 bg-card rounded-t-[32px] z-[100] border-t border-border shadow-[0_-20px_40px_rgba(0,0,0,0.15)] flex flex-col max-h-[85vh] pb-8">
 
               <div className="flex justify-center pt-3 pb-2">
                 <div className="w-12 h-1.5 bg-secondary rounded-full" />

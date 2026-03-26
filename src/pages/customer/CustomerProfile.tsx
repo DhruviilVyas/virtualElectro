@@ -11,8 +11,8 @@ const MENU_ITEMS = [
   { icon: Package, label: "My Orders", desc: "Track your purchases", path: "/customer/orders",color: "bg-primary/10 text-primary" },
   { icon: Wallet, label: "My Passbook", desc: "View wallet transactions", path: "/customer/passbook", color: "bg-info/10 text-info" }, // 👈 Naya Menu Item
   { icon: Wrench, label: "Raise a Ticket", desc: "Request repair or installation", path: "/customer/raise-ticket", color: "bg-accent/10 text-accent" },
-  { icon: Settings, label: "Settings", desc: "Notifications, privacy", color: "bg-muted text-muted-foreground" },
-  { icon: HelpCircle, label: "Help & Support", desc: "FAQs, contact us", color: "bg-success/10 text-success" },
+  { icon: Settings, label: "Settings", desc: "Notifications, privacy", path: "/customer/settings", color: "bg-muted text-muted-foreground" },
+  { icon: HelpCircle, label: "Help & Support", desc: "FAQs, contact us", path: "/customer/help", color: "bg-success/10 text-success" },
 ];
 
 const CustomerProfile: React.FC = () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, Package, ShoppingBag, Truck, CheckCircle2, Clock, Box, Phone, MapPin, Loader2, Tag, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Truck, CheckCircle2, Clock, Box, MapPin, Loader2, Tag, ExternalLink, Wrench } from "lucide-react";
 import { Order, OrderItem } from "@/types";
 import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -243,7 +243,7 @@ const MerchantOrders: React.FC = () => {
         { label: "Inventory", icon: Package, path: "/merchant/inventory" },
         { label: "Orders", icon: ShoppingBag, path: "/merchant/orders" },
         { label: "Offers", icon: Tag, path: "/merchant/offers" },
-        { label: "Issues", icon: Phone, path: "/merchant/issues" }
+        { label: "Issues", icon: Wrench, path: "/merchant/issues" }
       ]} />
     </MobileShell>
   );

@@ -418,7 +418,7 @@ const ShopDetailPage: React.FC = () => {
               <div ref={chatEndRef} />
             </div>
 
-            <div className="p-4 bg-card border-t flex gap-2">
+           <div className="p-4 pb-8 bg-card border-t flex gap-2">
               <input value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} className="flex-1 bg-secondary rounded-full px-4 py-3 text-sm outline-none" placeholder="Ask something..." />
               <button onClick={handleSendMessage} className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center text-primary-foreground shadow-glow"><Send size={18} /></button>
             </div>

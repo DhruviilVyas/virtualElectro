@@ -28,7 +28,8 @@ const allowedOrigins = [
   'https://virtual-electro.vercel.app', // 👈 Tumhara main Vercel URL
   'https://virtual-electro-ebnnkymu3-dhruvils-projects-9a843109.vercel.app', // Backup Vercel URL
   'http://localhost:5173',
-  'http://localhost:3000'
+  'http://localhost:3000',
+  'http://localhost:8080'
 ];
 
 // 👉 FIX 2: CORS SABSE UPAR HONA CHAHIYE

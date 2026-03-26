@@ -30,6 +30,10 @@ import NotFound from "@/pages/NotFound";
 import CustomerOrders from "@/pages/customer/CustomerOrders";
 import CustomerPassbook from "./pages/customer/CustomerPassbook";
 import CustomerNotifications from "./pages/customer/CustomerNotifications";
+import CustomerSettings from "./pages/customer/CustomerSettings";
+import CustomerHelp from "./pages/customer/CustomerHelp";
+import ResetPassword from "./pages/customer/ResetPassword";
+import ForgotPassword from "./pages/customer/ForgotPassword";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
@@ -65,6 +69,10 @@ const AppRoutes = () => {
           <Route path="/customer/raise-ticket" element={<RaiseTicketPage />} />
           <Route path="/customer/shop/:id" element={<ShopDetailPage />} />
           <Route path="/customer/notifications" element={<CustomerNotifications />} />
+          <Route path="/customer/help" element={<CustomerHelp />} />
+<Route path="/customer/settings" element={<CustomerSettings />} />
+<Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password/:token" element={<ResetPassword />} />
           {/* Customer kisi aur URL pe jaye toh wapas Home pe bhej do */}
           <Route path="*" element={<Navigate to="/customer" replace />} />
         </>
