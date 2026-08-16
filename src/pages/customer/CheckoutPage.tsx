@@ -125,7 +125,7 @@ const CheckoutPage: React.FC = () => {
   };
 
   const subtotal = cartItems.reduce((acc, item) => acc + ((item.price || 0) * (item.cartQuantity || 1)), 0);
-  const shipping = subtotal > 1000 ? 0 : 50;
+  const shipping = subtotal > 1000 ? 0 : 5;
   const tax = Math.round(subtotal * 0.18);
   const total = subtotal + shipping + tax;
 
@@ -190,9 +190,11 @@ const CheckoutPage: React.FC = () => {
             <ArrowLeft size={20} className="text-foreground" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-glow">
-              <Zap size={16} className="text-primary-foreground" fill="currentColor" />
-            </div>
+           <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0 relative">
+  <Zap size={20} className="text-primary-foreground" fill="currentColor" />
+  {/* Standard img tag works perfectly in Vite */}
+  <img src="/logo.png" alt="Logo" className="absolute w-5 h-5" />
+</div>
             <h1 className="text-xl font-extrabold text-foreground font-display tracking-tight">Checkout</h1>
           </div>
         </div>

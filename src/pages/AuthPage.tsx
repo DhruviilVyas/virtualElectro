@@ -123,9 +123,11 @@ const AuthPage: React.FC = () => {
           
           {/* Header Content */}
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/30 shadow-glow">
-              <Zap className="text-white" size={32} fill="currentColor" />
-            </div>
+            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0 relative">
+  <Zap size={20} className="text-primary-foreground" fill="currentColor" />
+  {/* Standard img tag works perfectly in Vite */}
+  <img src="/logo.png" alt="Logo" className="absolute w-5 h-5" />
+</div>
             <h1 className="text-3xl font-extrabold tracking-tight font-display text-white drop-shadow-md">
               ElectroCare
             </h1>

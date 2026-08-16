@@ -1,6 +1,5 @@
-// @ts-nocheck
-// Vercel deployment bypass
-import React, { useState, useEffect } from "react";
+
+  import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -12,7 +11,6 @@ import MobileShell from "@/components/MobileShell";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://virtualelectro.onrender.com";
 
 interface ProductType {
@@ -55,6 +53,16 @@ const CustomerHome: React.FC = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
 
+  const [queuePosition, setQueuePosition] = useState<number | null>(null);
+  const [isFlashSaleUnlocked, setIsFlashSaleUnlocked] = useState(false);
+  const flashSaleRef = useRef<HTMLDivElement>(null);
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  // 👉 NEW: Pagination State
+  const [visibleCount, setVisibleCount] = useState<number>(6); // Start with 6 products
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -73,7 +81,41 @@ const CustomerHome: React.FC = () => {
     const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
+const fetchProducts = async (pageNum: number) => {
+    if (pageNum === 1) setIsLoading(true);
+    else setIsFetchingMore(true);
 
+    try {
+      // API call with page and limit
+      const res = await fetch(`${API_BASE_URL}/api/products?page=${pageNum}&limit=8`);
+      const result = await res.json();
+
+      if (result.success) {
+        // Agar page 1 hai toh naya data set karo, varna purane mein append karo
+        setDbProducts(prev => pageNum === 1 ? result.data : [...prev, ...result.data]);
+        
+        // Agar jitna data mangaya tha usse kam mila, matlab aage aur data nahi hai
+        if (result.data.length < 8) {
+          setHasMore(false);
+        }
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to load products" });
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, []);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchProducts(nextPage);
+  };
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -104,23 +146,57 @@ const CustomerHome: React.FC = () => {
     const savedLoc = localStorage.getItem("electrocare_user_loc");
     if (savedLoc) setUserLocation(JSON.parse(savedLoc));
   }, []);
+const flashSaleProducts = dbProducts.filter(p => p.offer);
 
+ // Normal filtering for Top Picks
   const filteredProducts = dbProducts.filter((p) => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     const nameMatch = p.name ? p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) : false;
-    const shopMatch = p.shopName ? p.shopName.toLowerCase().includes(debouncedSearch.toLowerCase()) : false;
-    const matchesSearch = nameMatch || shopMatch;
     const matchesPrice = (p.price || 0) <= maxPrice;
-    return matchesCategory && matchesSearch && matchesPrice;
+    return matchesCategory && nameMatch && matchesPrice;
   });
 
   if (sortBy === "low") filteredProducts.sort((a, b) => (a.price || 0) - (b.price || 0));
   if (sortBy === "high") filteredProducts.sort((a, b) => (b.price || 0) - (a.price || 0));
 
-  const trendingProducts = filteredProducts.filter(p => p.offer);
-  const displayProducts = debouncedSearch || selectedCategory !== "All" || sortBy !== "none" || maxPrice < 150000
-    ? filteredProducts
-    : (trendingProducts.length > 0 ? trendingProducts : filteredProducts.slice(0, 6));
+  // 👉 UPDATED: Slice based on visibleCount, not hardcoded 10
+  const regularProducts = filteredProducts.filter(p => !p.offer);
+  const displayProducts = regularProducts.slice(0, visibleCount);
+  
+  // 👉 NEW: Check if there are more products to show
+  const hasMoreProducts = visibleCount < regularProducts.length;
+  
+    const handleEnterFlashSale = () => {
+    if (flashSaleProducts.length === 0) {
+      toast({ title: "No Deals Live", description: "There are no flash sale products right now." });
+      return;
+    }
+
+    // SIMULATE JOINING REDIS QUEUE
+    let currentPos = Math.floor(Math.random() * 50) + 20; // Starts between 20-70
+    setQueuePosition(currentPos);
+    setSearchTerm(""); 
+    setSelectedCategory("All");
+
+    // SIMULATE QUEUE MOVING
+    const queueInterval = setInterval(() => {
+      currentPos -= Math.floor(Math.random() * 5) + 1; // Drop by 1-5 spots
+      
+      if (currentPos <= 0) {
+        clearInterval(queueInterval);
+        setQueuePosition(null);
+        setIsFlashSaleUnlocked(true);
+        toast({ title: "Unlocked!", description: "Welcome to the Flash Sale!" });
+        
+        // Auto-scroll to flash sale section
+        setTimeout(() => {
+          flashSaleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      } else {
+        setQueuePosition(currentPos);
+      }
+    }, 1000); // Updates every second
+  };
 
   const toggleWishlist = (id: string | number | undefined, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -179,9 +255,11 @@ const CustomerHome: React.FC = () => {
           <div className="px-5 pt-5 pb-4">
             <div className="flex justify-between items-center mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0">
-                  <Zap size={20} className="text-primary-foreground" fill="currentColor" />
-                </div>
+            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0 relative">
+  <Zap size={20} className="text-primary-foreground" fill="currentColor" />
+  {/* Standard img tag works perfectly in Vite */}
+  <img src="/logo.png" alt="Logo" className="absolute w-5 h-5" />
+</div>
                 <div>
                   <h1 className="text-xl font-extrabold font-display tracking-tight text-foreground leading-none">ElectroCare</h1>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Marketplace</p>
@@ -245,27 +323,75 @@ const CustomerHome: React.FC = () => {
           </motion.div>
         )}
 
-        {!debouncedSearch && (
+       {!debouncedSearch && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mx-5 mt-6 p-6 gradient-accent rounded-3xl text-primary-foreground relative overflow-hidden shadow-elevated">
             <div className="absolute -right-8 -top-8 w-40 h-40 bg-primary-foreground/10 rounded-full blur-2xl" />
             <div className="absolute -right-4 -bottom-10 w-24 h-24 bg-primary-foreground/5 rounded-full blur-xl" />
             <div className="relative z-10">
               <div className="flex items-center gap-1.5 mb-2.5">
                 <Sparkles size={14} className="text-warning" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-warning drop-shadow-md">Flash Sale</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-warning drop-shadow-md">Live Waitroom</span>
               </div>
-              <h3 className="text-2xl font-black font-display leading-tight">Up to 40% Off <br /> <span className="text-primary-foreground/80 text-lg">on Electronics</span></h3>
-              <button
-                onClick={() => {
-                  setSearchTerm(""); setSelectedCategory("All");
-                  toast({ title: "Offers Applied", description: "Showing discounted products." });
-                }}
-                className="mt-4 px-5 py-2.5 bg-primary-foreground/20 hover:bg-primary-foreground/30 rounded-xl text-xs font-bold backdrop-blur-md flex items-center gap-2 transition-colors active:scale-95"
-              >
-                Explore Deals <ArrowRight size={14} />
-              </button>
+              <h3 className="text-2xl font-black font-display leading-tight">Exclusive <br /> <span className="text-primary-foreground/80 text-lg">Flash Sales</span></h3>
+              
+              {!isFlashSaleUnlocked ? (
+                <button
+                  onClick={handleEnterFlashSale}
+                  className="mt-4 px-5 py-2.5 bg-primary-foreground text-primary hover:bg-background rounded-xl text-xs font-extrabold backdrop-blur-md flex items-center gap-2 transition-colors active:scale-95 shadow-lg"
+                >
+                  Enter Flash Sale <ArrowRight size={14} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => flashSaleRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="mt-4 px-5 py-2.5 bg-warning/20 border border-warning/50 text-warning rounded-xl text-xs font-bold flex items-center gap-2"
+                >
+                  Sale Unlocked! <Zap size={14} className="fill-warning" />
+                </button>
+              )}
             </div>
           </motion.div>
+        )}
+
+        {/* 🛑 UNLOCKED FLASH SALE SECTION */}
+        {isFlashSaleUnlocked && flashSaleProducts.length > 0 && (
+          <div className="px-5 mt-8 scroll-mt-24" ref={flashSaleRef}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-extrabold text-foreground font-display flex items-center gap-2">
+                <Zap size={18} className="text-primary fill-primary" /> Flash Sale Deals
+              </h2>
+              <Badge variant="destructive" className="animate-pulse">Live Now</Badge>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {flashSaleProducts.map((p) => (
+                <motion.div 
+                  key={p._id} 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-primary/5 border-2 border-primary/20 rounded-3xl relative overflow-hidden"
+                >
+                  <Badge className="absolute top-0 right-0 rounded-bl-xl rounded-tr-xl rounded-tl-none rounded-br-none gradient-primary border-none px-3 py-1 text-[10px] font-black">
+                    {p.offer}
+                  </Badge>
+                  <div className="flex gap-4 items-center mt-2">
+                    <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                      {p.image?.startsWith('http') ? <img src={p.image} className="w-full h-full object-contain" /> : (p.image || "📦")}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-sm line-clamp-1">{p.name}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-primary font-black text-lg">₹{p.price?.toLocaleString('en-IN')}</p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground font-medium mt-0.5 flex items-center gap-1">
+                         <Store size={10} /> {p.shopName || "ElectroStore"}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         )}
 
         {!debouncedSearch && (
@@ -317,7 +443,8 @@ const CustomerHome: React.FC = () => {
         <div className="px-5 mt-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-extrabold text-foreground font-display flex items-center gap-2">
-              {debouncedSearch || maxPrice < 150000 || sortBy !== "none" ? `Results (${displayProducts.length})` : <><TrendingUp size={18} className="text-primary" /> Top Picks</>}
+              {debouncedSearch || maxPrice < 150000 || sortBy !== "none" ? `Results (${displayProducts.length})` : <>
+              <TrendingUp size={18} className="text-primary" /> Top Picks</>}
             </h2>
           </div>
 
@@ -327,10 +454,10 @@ const CustomerHome: React.FC = () => {
             <div className="text-center py-10 text-muted-foreground bg-card rounded-3xl border border-dashed border-border mt-4">
               <Search size={32} className="mx-auto opacity-20 mb-3" />
               <p className="text-sm font-bold text-foreground">No products found</p>
-              <p className="text-xs mt-1">Try adjusting your filters or search term.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3.5">
+            <>
+              <div className="grid grid-cols-2 gap-3.5">
               {displayProducts.map((p, i) => {
                 const productId = p._id || p.id;
                 return (
@@ -364,7 +491,19 @@ const CustomerHome: React.FC = () => {
                 );
               })}
             </div>
+            {hasMoreProducts && (
+                <div className="flex justify-center mt-6">
+                  <button 
+                    onClick={() => setVisibleCount(prev => prev + 6)} 
+                    className="px-6 py-3 bg-secondary/50 hover:bg-secondary text-foreground text-xs font-bold rounded-2xl border border-border/50 flex items-center gap-2 active:scale-95 transition-all"
+                  >
+                    Load More <ArrowUpDown size={14} className="text-muted-foreground" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
+
         </div>
       </div>
 
@@ -420,7 +559,33 @@ const CustomerHome: React.FC = () => {
           </>
         )}
       </AnimatePresence>
-
+<AnimatePresence>
+        {queuePosition && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-background/95 backdrop-blur-md z-[110] flex items-center justify-center p-6 text-center">
+              <div className="space-y-6">
+                <div className="w-32 h-32 mx-auto relative flex items-center justify-center">
+                   <Loader2 size={100} className="text-primary animate-spin opacity-20 absolute" />
+                   <div className="flex flex-col items-center">
+                     <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Position</span>
+                     <span className="text-4xl font-black text-primary">#{queuePosition}</span>
+                   </div>
+                </div>
+                <h3 className="text-2xl font-black">Hold Tight!</h3>
+                <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                  You are in the secure waitroom. Your position is updating in real-time. Do not close this app!
+                </p>
+                <div className="w-full bg-secondary h-2 rounded-full overflow-hidden mt-4">
+                   <motion.div 
+                     className="h-full gradient-primary" 
+                     animate={{ width: `${Math.max(10, 100 - (queuePosition * 2))}%` }} 
+                     transition={{ duration: 0.5 }}
+                   />
+                </div>
+                <button onClick={() => setQueuePosition(null)} className="px-8 py-3 bg-secondary rounded-2xl text-xs font-bold mt-6">Leave Queue</button>
+              </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* 👉 FIX: Added z-[100] here too */}
       <AnimatePresence>
         {showFilterModal && (

@@ -16,7 +16,7 @@ import userRoutes from './routes/userRoutes.js';
 import chatRoutes from './routes/chatRoutes.js'; 
 import jwt from 'jsonwebtoken';
 import ticketRoutes from './routes/ticketRoutes.js';
-
+import './cron/expiryJob.js';
 const JWT_SECRET = process.env.JWT_SECRET || "electrocare_super_secret_key_2026";
 
 const app = express();
@@ -53,6 +53,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes); 
 app.use('/api/chats', chatRoutes); 
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/flashsale', productRoutes);
 
 // ==========================================
 // 5️⃣ WEBSOCKETS (REAL-TIME PRIVATE CHAT)

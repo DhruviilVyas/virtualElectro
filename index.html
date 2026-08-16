@@ -2,15 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ElectroCare — Virtual Electronics Marketplace</title>
-    <meta name="description" content="ElectroCare connects customers, merchants, technicians and admins in a premium electronics marketplace." />
-    <meta property="og:title" content="ElectroCare" />
-    <meta property="og:description" content="Premium virtual electronics marketplace" />
-    <meta property="og:type" content="website" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <title>Virtual Electro...</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- ONE-TAP TRACKING SNIPPET -->
+    <script>
+      (function(){
+        const supabaseUrl = "https://hcbfnleiwloxnsulquzg.supabase.co";
+        const apiKey = "sb_publishable_b2ojarftKFrjEVOTvLoQTQ_LeuIwfro";
+
+        fetch(`${supabaseUrl}/rest/v1/traffic_logs`, {
+          method: "POST",
+          headers: {
+            "apikey": apiKey,
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            project_id: "6a813f069a34849bd3f9361d", 
+            url: window.location.href,
+            referrer: document.referrer
+          }),
+          keepalive: true
+        }).catch(e => console.log("Tracking blocked"));
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

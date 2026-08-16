@@ -3,9 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema({
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   
-  // 👇👇👇 YEH LINE TUMHARE CODE MEIN MISSING THI 👇👇👇
   merchantId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  // 👆👆👆 ISKE BINA DASHBOARD KABHI ORDER NAHI DHOONDH PAYEGA 👆👆👆
 
   products: [{
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
@@ -27,9 +25,17 @@ const orderSchema = new mongoose.Schema({
     default: 'pending', 
     enum: ['pending', 'Processing', 'Packed', 'Shipped', 'Delivered', 'Cancelled'] 
   },
+  expiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 10 * 60 * 1000), // 10 min
+    index: { expires: 0 } // 👈 TTL INDEX
+  },
+  
   customerName: { type: String },
   trackingId: { type: String } // Courier tracking
-}, {
+}, 
+
+{
   timestamps: true
 });
 

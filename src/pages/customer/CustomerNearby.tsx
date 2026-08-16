@@ -74,9 +74,11 @@ const CustomerNearby: React.FC = () => {
                 {userLoc ? `Scanning around ${userLoc.area}` : "Scanning nearby area"}
               </p>
             </div>
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-              <Map size={18} className="text-primary-foreground" />
-            </div>
+           <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0 relative">
+  <Map size={20} className="text-primary-foreground" fill="currentColor" />
+  {/* Standard img tag works perfectly in Vite */}
+  <img src="/logo.png" alt="Logo" className="absolute w-5 h-5" />
+</div>
           </div>
 
           <div className="flex gap-2">

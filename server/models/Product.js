@@ -7,7 +7,11 @@ const productSchema = new mongoose.Schema({
   category: { type: String },
   image: { type: String, default: "📦" },
   offer: { type: String },
-  
+  // Flash Sale Specific Fields
+isFlashSale: { type: Boolean, default: false },
+flashPrice: { type: Number },
+flashStock: { type: Number }, // Normal stock se alag flash sale ka quota
+saleStartTime: { type: Date },
   // 👉 THE PRO-SECURITY FIX: Har product par uske Merchant ka permanent thappa (ID)
   merchantId: { 
     type: mongoose.Schema.Types.ObjectId, 

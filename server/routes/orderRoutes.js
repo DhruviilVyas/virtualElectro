@@ -4,11 +4,11 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
-
+import { orderLimiter } from '../middleware/rateLimiter.js';
 const router = express.Router();
-
+let reservedProducts = [];
 // 🛒 1. PRO-LEVEL SECURE CHECKOUT (Order Splitting + Wallet + Smart Sync)
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, orderLimiter, async (req, res) => {
   let isMoneyDeducted = false; 
   let finalPayableAmount = 0;
   const customerId = req.user._id;
@@ -30,8 +30,28 @@ router.post('/', protect, async (req, res) => {
       const dbProduct = await Product.findById(item.productId);
       
       if (!dbProduct) return res.status(404).json({ error: "Product not found in database" });
-      if (dbProduct.stock < item.quantity) return res.status(400).json({ error: `Out of stock: ${dbProduct.name}` });
+const updatedProduct = await Product.findOneAndUpdate(
+  {
+    _id: dbProduct._id,
+    stock: { $gte: item.quantity }
+  },
+  {
+    $inc: { stock: -item.quantity }
+  },
+  {
+    new: true
+  }
+);
 
+if (!updatedProduct) {
+  throw new Error(`Out of stock: ${dbProduct.name}`);
+}
+
+// Track for rollback
+reservedProducts.push({
+  productId: dbProduct._id,
+  quantity: item.quantity
+});
       // 🔥 THE BULLETPROOF FIX: We don't care what frontend sends, we use DB's merchantId!
       const actualMerchantId = dbProduct.merchantId ? dbProduct.merchantId.toString() : null;
 
@@ -143,9 +163,7 @@ router.post('/', protect, async (req, res) => {
       });
 
       // Deduct Stock
-      for (const p of merchantOrderData.products) {
-        await Product.findByIdAndUpdate(p.product, { $inc: { stock: -p.quantity } });
-      }
+     
     }
 
     if(transactionLogs.length > 0) {
@@ -164,6 +182,12 @@ router.post('/', protect, async (req, res) => {
 
   } catch (error) {
     console.error("🚨 Critical Checkout Error:", error);
+    // 🔥 rollback stock
+for (const item of reservedProducts) {
+  await Product.findByIdAndUpdate(item.productId, {
+    $inc: { stock: item.quantity }
+  });
+}
     if (isMoneyDeducted) {
       await User.findByIdAndUpdate(customerId, { $inc: { walletBalance: finalPayableAmount } });
     }
@@ -171,6 +195,25 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
+router.post('/reserve/:id', protect, async (req, res) => {
+  const quantity = req.body.quantity || 1;
+
+  const product = await Product.findOneAndUpdate(
+    { _id: req.params.id, stock: { $gte: quantity } },
+    { $inc: { stock: -quantity } },
+    { new: true }
+  );
+
+  if (!product) return res.status(400).json({ error: "Out of stock" });
+
+  const order = await Order.create({
+    userId: req.user._id,
+    productId: product._id,
+    quantity
+  });
+
+  res.json({ success: true, order });
+});
 // 🕒 2. MY ORDERS (Customer History)
 router.get('/my-orders', protect, async (req, res) => {
   try {

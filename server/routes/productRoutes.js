@@ -5,15 +5,34 @@ import upload from '../middleware/upload.js';
 const router = express.Router();
 
 // 🟢 PUBLIC: Koi bhi (Customer/Guest) saare products dekh sakta hai
+// 🟢 PUBLIC: Fetch Products with Pagination
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.json(products);
+    // 1. Frontend se params lo (Defaults set kar diye hain)
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4; // Ek baar mein 4 products kaafi hain mobile UI ke liye
+    const skip = (page - 1) * limit;
+
+    // 2. Database se chunks mein data mangwao
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // 3. Total products count karo (Frontend ko batane ke liye ki 'Load More' dikhana hai ya nahi)
+    const totalProducts = await Product.countDocuments();
+
+    res.json({
+      success: true,
+      total: totalProducts,
+      page,
+      pages: Math.ceil(totalProducts / limit),
+      data: products
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch products" });
   }
 });
-
 // 🟠 PROTECTED: Ek Merchant sirf APNE products dekh payega
 // ⚠️ RULE: This MUST be ABOVE `/:id` route
 router.get('/my-inventory', protect, authorize('merchant', 'admin'), async (req, res) => {
@@ -59,6 +78,34 @@ router.post('/', protect, authorize('merchant', 'admin'), upload.single('image')
   } catch (error) {
     console.error("Product upload error:", error);
     res.status(500).json({ error: "Failed to add product" });
+  }
+});
+
+router.post('/buy/:id', protect, async (req, res) => {
+  try {
+    const quantity = req.body.quantity || 1;
+
+    const product = await Product.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        stock: { $gte: quantity } // 👈 CONDITION (VERY IMPORTANT)
+      },
+      {
+        $inc: { stock: -quantity } // 👈 ATOMIC DECREMENT
+      },
+      {
+        new: true
+      }
+    );
+
+    if (!product) {
+      return res.status(400).json({ error: "Out of stock" });
+    }
+
+    res.json({ success: true, product });
+
+  } catch (err) {
+    res.status(500).json({ error: "Purchase failed" });
   }
 });
 

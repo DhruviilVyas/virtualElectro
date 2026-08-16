@@ -112,9 +112,11 @@ const CustomerCart: React.FC = () => {
         <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-xl border-b border-border shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
           <div className="px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0">
-                <Zap size={20} className="text-primary-foreground" fill="currentColor" />
-              </div>
+             <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow shrink-0 relative">
+  <Zap size={20} className="text-primary-foreground" fill="currentColor" />
+  {/* Standard img tag works perfectly in Vite */}
+  <img src="/logo.png" alt="Logo" className="absolute w-5 h-5" />
+</div>
               <div>
                 <h1 className="text-xl font-extrabold text-foreground font-display leading-none tracking-tight">My Cart</h1>
                 <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-1">{cartItems.length} Items securely saved</p>
