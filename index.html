@@ -12,42 +12,34 @@
 
     <!-- ONE-TAP TRACKING SNIPPET -->
  <!-- ONE-TAP TRACKING SNIPPET (Total + Realtime Live Traffic) -->
+<!-- ONE-TAP LIVE TRACKING (100% Serverless WebSockets) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   (function(){
     const supabaseUrl = "https://frbkoitcqjfbusdftkfr.supabase.co";
     const apiKey = "sb_publishable_pVCXinNUyr3a7TVNUhrD5w_AyytUEvi";
     const projectId = "6a82f725883885bad083e75e";
 
-    // Unique session ID for each visitor tab
-    let sessionId = sessionStorage.getItem('onetap_sid');
-    if (!sessionId) {
-      sessionId = Math.random().toString(36).substring(2, 12);
-      sessionStorage.setItem('onetap_sid', sessionId);
-    }
+    // Supabase client initialize
+    const supabaseClient = supabase.createClient(supabaseUrl, apiKey);
 
-    function sendLog() {
-      fetch(`${supabaseUrl}/rest/v1/traffic_logs`, {
-        method: "POST",
-        headers: {
-          "apikey": apiKey,
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-          project_id: projectId, 
-          url: window.location.href,
-          referrer: document.referrer || sessionId // Session track karne ke liye
-        }),
-        keepalive: true
-      }).catch(e => console.log("Tracking blocked"));
-    }
+    // 1. Total Views count karne ke liye Database me log insert
+    supabaseClient.from('traffic_logs').insert([{ 
+      project_id: projectId, 
+      url: window.location.href, 
+      referrer: document.referrer 
+    }]).then();
 
-    // Pehle load par view log karega
-    sendLog();
-
-    // Har 30 second me heartbeat ping
-    setInterval(sendLog, 30000); 
+    // 2. LIVE TRAFFIC ke liye Supabase Presence (WebSockets)
+    // Jaise hi user website kholega, wo is room me shamil ho jayega
+    const liveRoom = supabaseClient.channel('live_' + projectId);
+    
+    liveRoom.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        // User ko "Online" mark kar do
+        await liveRoom.track({ online_at: new Date().toISOString() });
+      }
+    });
   })();
 </script>
   </head>
