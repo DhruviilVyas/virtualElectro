@@ -11,29 +11,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- ONE-TAP TRACKING SNIPPET -->
-    <script>
-      (function(){
-        const supabaseUrl = "https://frbkoitcqjfbusdftkfr.supabase.co";
-        const apiKey = "sb_publishable_pVCXinNUyr3a7TVNUhrD5w_AyytUEvi";
+  <!-- ONE-TAP TRACKING SNIPPET (Total + Live Traffic) -->
+<script>
+  (function(){
+    const supabaseUrl = "https://frbkoitcqjfbusdftkfr.supabase.co";
+    const apiKey = "sb_publishable_pVCXinNUyr3a7TVNUhrD5w_AyytUEvi";
+    const projectId = "6a82f725883885bad083e75e"; // Tumhari ID
 
-        fetch(`${supabaseUrl}/rest/v1/traffic_logs`, {
-          method: "POST",
-          headers: {
-            "apikey": apiKey,
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            // YAHAN MENE POORI ID DAAL DI HAI 👇
-            project_id: "6a813f069a34849bd3f9361d", 
-            url: window.location.href,
-            referrer: document.referrer
-          }),
-          keepalive: true
-        }).catch(e => console.log("Tracking blocked"));
-      })();
-    </script>
+    function sendLog() {
+      fetch(`${supabaseUrl}/rest/v1/traffic_logs`, {
+        method: "POST",
+        headers: {
+          "apikey": apiKey,
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          project_id: projectId, 
+          url: window.location.href,
+          referrer: document.referrer
+        }),
+        keepalive: true
+      }).catch(e => console.log("Tracking blocked"));
+    }
+
+    // 1. Pehli baar aate hi Total View badhao
+    sendLog();
+
+    // 2. Har 60 seconds (1 minute) me ping karo taaki 'Live Traffic' me user dikhta rahe
+    setInterval(sendLog, 60000); 
+  })();
+</script>
   </head>
   <body>
     <div id="root"></div>
