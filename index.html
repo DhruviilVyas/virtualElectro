@@ -11,12 +11,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- ONE-TAP TRACKING SNIPPET -->
-  <!-- ONE-TAP TRACKING SNIPPET (Total + Live Traffic) -->
+ <!-- ONE-TAP TRACKING SNIPPET (Total + Realtime Live Traffic) -->
 <script>
   (function(){
     const supabaseUrl = "https://frbkoitcqjfbusdftkfr.supabase.co";
     const apiKey = "sb_publishable_pVCXinNUyr3a7TVNUhrD5w_AyytUEvi";
-    const projectId = "6a82f725883885bad083e75e"; // Tumhari ID
+    const projectId = "6a82f725883885bad083e75e";
+
+    // Unique session ID for each visitor tab
+    let sessionId = sessionStorage.getItem('onetap_sid');
+    if (!sessionId) {
+      sessionId = Math.random().toString(36).substring(2, 12);
+      sessionStorage.setItem('onetap_sid', sessionId);
+    }
 
     function sendLog() {
       fetch(`${supabaseUrl}/rest/v1/traffic_logs`, {
@@ -30,17 +37,17 @@
         body: JSON.stringify({
           project_id: projectId, 
           url: window.location.href,
-          referrer: document.referrer
+          referrer: document.referrer || sessionId // Session track karne ke liye
         }),
         keepalive: true
       }).catch(e => console.log("Tracking blocked"));
     }
 
-    // 1. Pehli baar aate hi Total View badhao
+    // Pehle load par view log karega
     sendLog();
 
-    // 2. Har 60 seconds (1 minute) me ping karo taaki 'Live Traffic' me user dikhta rahe
-    setInterval(sendLog, 60000); 
+    // Har 30 second me heartbeat ping
+    setInterval(sendLog, 30000); 
   })();
 </script>
   </head>
